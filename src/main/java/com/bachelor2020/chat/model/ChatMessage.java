@@ -30,4 +30,16 @@ public class ChatMessage {
     @ManyToOne
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;
+
+    @Override
+    public String toString() {
+        return "ChatMessage{" +
+                "chat_Message_id=" + chat_Message_id +
+                ", content='" + content + '\'' +
+                ", sentDate=" + sentDate +
+                ", sentTime=" + sentTime +
+                ", studentID and name=" + student.getStudent_id() + " " + student.getFirst_name() +
+                ", conversationID=" + conversation.getConversation_id() +
+                '}';
+    }
 }

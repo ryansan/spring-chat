@@ -30,11 +30,12 @@ public class ChatRoomController {
     @Autowired
     ChatMessageService chatMessageService;
 
-    @MessageMapping("/chat/{roomId}/sendMessage")
-    public void sendMessage(@DestinationVariable String roomId, @Payload Message chatMessage){
-        System.out.println(roomId + "Chat message recieved: " + chatMessage.getContent() + "");
-        messagingTemplate.convertAndSend(format("/topic/%s", roomId), chatMessage);
-        chatMessageService.createNewChatMessage(chatMessage, Long.parseLong(roomId));
+    @MessageMapping("/chat/{studyGroupID}/sendMessage")
+    public void sendMessage(@DestinationVariable String studyGroupID, @Payload Message chatMessage){
+        System.out.println(studyGroupID + "Chat message recieved: " + chatMessage.getContent() + "");
+        ChatMessage newChatMessage = chatMessageService.createNewChatMessage(chatMessage, Long.parseLong(studyGroupID));
+        System.out.println(newChatMessage);
+        messagingTemplate.convertAndSend(format("/topic/%s", studyGroupID), newChatMessage);
     }
 
     @MessageMapping("/chat/{roomId}/addUser")

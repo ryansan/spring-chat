@@ -43,7 +43,7 @@ public class StudyGroupService {
         List<Student> studentsToBeAdded = new ArrayList<>();
 
         //If the studygroup doesnt exist already, add it
-        if(studyGroupRepository.getStudyGroupByStudyGroupID(studyGroup.getStudy_group_id()) == null){
+        if(getStudyGroupByStudyGroupID(studyGroup.getStudy_group_id()) == null){
             for (int i = 0; i < studyGroup.getStudents().size(); i++) {
                 Student student = studyGroup.getStudents().get(i);
                 Student studentByStudentID = studentService.getStudentByStudentID(student.getStudent_id());
@@ -87,6 +87,10 @@ public class StudyGroupService {
         Conversation conversation = new Conversation();
         conversation.setStudyGroup(studyGroup);
         return true;
+    }
+
+    public StudyGroup getStudyGroupByStudyGroupID(long studyGroupID){
+        return studyGroupRepository.getStudyGroupByStudyGroupID(studyGroupID);
     }
 
 

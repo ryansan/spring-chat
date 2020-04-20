@@ -1,5 +1,8 @@
 package com.bachelor2020.chat.model;
 
+import java.sql.Date;
+import java.sql.Time;
+
 public class Message {
     public enum MessageType {CHAT, JOIN, LEAVE}
 
@@ -8,6 +11,8 @@ public class Message {
     private String sender;
     private long studentID;
     private Student student;
+    private Date sentDate;
+    private Time sentTime;
 
     //messageType
     //content
@@ -53,13 +58,33 @@ public class Message {
         this.student = student;
     }
 
+    public Date getSentDate() {
+        return sentDate;
+    }
+
+    public void setSentDate(Date sentDate) {
+        this.sentDate = sentDate;
+    }
+
+    public Time getSentTime() {
+        return sentTime;
+    }
+
+    public void setSentTime(Time sentTime) {
+        this.sentTime = sentTime;
+    }
+
+
     @Override
     public String toString() {
         return "Message{" +
                 "messageType=" + messageType +
                 ", content='" + content + '\'' +
                 ", sender='" + sender + '\'' +
+                ", studentID=" + studentID +
                 ", student ID and name=" + student.getStudent_id() + " " + student.getFirst_name() + " " + student.getLast_name() +
+                ", sentDate=" + sentDate +
+                ", sentTime=" + sentTime +
                 '}';
     }
 }

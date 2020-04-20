@@ -1,9 +1,6 @@
 package com.bachelor2020.chat.service;
 
-import com.bachelor2020.chat.model.ChatMessage;
-import com.bachelor2020.chat.model.Conversation;
-import com.bachelor2020.chat.model.Message;
-import com.bachelor2020.chat.model.Student;
+import com.bachelor2020.chat.model.*;
 import com.bachelor2020.chat.repository.ChatMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,15 +12,18 @@ import java.time.LocalTime;
 @Service
 public class ChatMessageService {
     @Autowired
-    ChatMessageRepository chatMessageRepository;
+    private ChatMessageRepository chatMessageRepository;
 
     @Autowired
-    StudentService studentService;
+    private StudentService studentService;
 
     @Autowired
-    ConversationService conversationService;
+    private ConversationService conversationService;
 
-    public void createNewChatMessage(Message incomingMessage, long conversationID){
+    @Autowired
+    private StudyGroupService studyGroupService;
+
+    public ChatMessage createNewChatMessage(Message incomingMessage, long studyGroupID){
         ChatMessage message = new ChatMessage();
 
         //Set content of message
@@ -32,8 +32,20 @@ public class ChatMessageService {
         //Set sent time and date
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
-        message.setSentDate(java.sql.Date.valueOf(today));
-        message.setSentTime(java.sql.Time.valueOf(now));
+
+        System.out.println(today);
+        System.out.println(now);
+
+        if(incomingMessage.getSentDate() == null && incomingMessage.getSentDate() == null){
+            message.setSentDate(java.sql.Date.valueOf(today));
+            message.setSentTime(java.sql.Time.valueOf(now));
+        }else{
+            message.setSentDate(incomingMessage.getSentDate());
+            message.setSentTime(incomingMessage.getSentTime());
+            System.out.println(message.getSentDate());
+            System.out.println(message.getSentTime());
+        }
+
 
         System.out.println("Trying to find student with ID " + incomingMessage.getStudentID());
         //Set student sending the message
@@ -44,12 +56,22 @@ public class ChatMessageService {
             System.out.println("Couldnt find student");
         }
 
-        Conversation conversation = conversationService.getConversationByID(conversationID);
-        //conversation.getChatMessages().add(message);
-        message.setConversation(conversation);
+        //get convo by studygroudid
+        StudyGroup studyGroup = studyGroupService.getStudyGroupByStudyGroupID(studyGroupID);
+        Conversation conversation = null;
 
-        //Conversation saveConversation = conversationService.saveConversation(conversation);
-        //message.setConversation(saveConversation);
-        chatMessageRepository.save(message);
+        if(studyGroup != null){
+            conversation = studyGroup.getConversation();
+        }else{
+            System.out.println("Couldnt find studygroup");
+        }
+
+        if(conversation != null){
+            message.setConversation(conversation);
+        }else{
+            System.out.println("Couldn't find conversation");
+        }
+
+        return chatMessageRepository.save(message);
     }
 }
