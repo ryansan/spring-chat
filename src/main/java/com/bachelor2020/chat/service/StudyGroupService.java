@@ -1,10 +1,12 @@
 package com.bachelor2020.chat.service;
 
 import com.bachelor2020.chat.model.Conversation;
+import com.bachelor2020.chat.model.ConversationKey;
 import com.bachelor2020.chat.model.Student;
 import com.bachelor2020.chat.model.StudyGroup;
 import com.bachelor2020.chat.repository.StudentRepository;
 import com.bachelor2020.chat.repository.StudyGroupRepository;
+import com.bachelor2020.chat.util.AESUtil;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -12,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -76,6 +81,24 @@ public class StudyGroupService {
             studyGroup.setStudents(studentsToBeAdded);
             Conversation conversation = new Conversation();
             conversation.setStudyGroup(studyGroup);
+
+            AESUtil aesUtil = new AESUtil();
+            //Generate a random secrety key
+            byte[] secretKey = aesUtil.generateSecretKey();
+
+            System.out.println("Created key with value " + secretKey);
+
+            //Create new ConversationKey to be used for encrypting/decrypting messages
+            ConversationKey conversationKey = new ConversationKey();
+            conversationKey.setSigningKey(secretKey);
+
+            System.out.println("Added key to convoKey " + conversationKey.getSigningKey());
+
+            //Set key to conversation
+            conversation.setConversationKey(conversationKey);
+            //Set conversation to key as well
+            conversationKey.setConversation(conversation);
+
             studyGroup.setConversation(conversation);
             return studyGroupRepository.save(studyGroup);
         }else{

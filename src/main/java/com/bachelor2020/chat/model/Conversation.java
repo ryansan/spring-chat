@@ -24,6 +24,11 @@ public class Conversation {
     @JsonIgnore
     private StudyGroup studyGroup;
 
+    //@JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "conversation")
+    @JsonIgnore
+    private ConversationKey conversationKey;
+
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL)
     private List<ChatMessage> chatMessages;
 }
